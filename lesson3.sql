@@ -1,7 +1,7 @@
 -- Создание БД для социальной сети ВКонтакте
 
 -- Создаём БД--
-CREATE DATABASE vk;
+
 
 -- Делаем её текущей
 USE vk;
@@ -81,7 +81,7 @@ CREATE TABLE friendship_statuses (
 -- но это не критично. Хочется сделать с id цифровым всё же в силу удобства и некого стандарта
 CREATE TABLE communities (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(150) NOT NULL UNIQUE
+  name VARCHAR(150) NOT NULL UNIQUE,
   author_id INT UNSIGNED DEFAULT NULL,
   created_at DATETIME DEFAULT NOW()
 );
@@ -129,6 +129,3 @@ CREATE TABLE media_types (
 
 -- Заполняем таблицы с учётом отношений 
 -- на http://filldb.info
-
-
-
