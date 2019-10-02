@@ -124,8 +124,16 @@ CREATE TABLE media_types (
   name VARCHAR(255) NOT NULL UNIQUE
 );
 
--- Рекомендуемый стиль написания кода SQL
--- https://www.sqlstyle.guide/ru/
+--Создаем таблицы для лайков 
+--Создаем таблицу/таблицы для того, чтобы можно было использовать лайки для медиафайлов, постов и пользователей
+-- сделал ENUM чтобы не делать таблицу, так как там нет доп. данных 
+CREATE TABLE likes (
+  objects ENUM ('media','post','user') NOT NULL,
+  object_id INT UNSIGNED NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (objects , object_id, user_id)
+);
 
 -- Заполняем таблицы с учётом отношений 
 -- на http://filldb.info
