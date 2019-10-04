@@ -1,0 +1,110 @@
+mysql> show tables
+    -> ;
++----------------------+
+| Tables_in_vk         |
++----------------------+
+| communities          |
+| communities_statuses |
+| communities_users    |
+| emoji                |
+| friendship           |
+| friendship_statuses  |
+| likes                |
+| media                |
+| media_types          |
+| messages             |
+| posts                |
+| profiles             |
+| regions              |
+| target_types         |
+| users                |
++----------------------+
+15 rows in set (0,00 sec)
+
+mysql> insert into target_types (id,name) values (null,'posts');
+Query OK, 1 row affected (0,01 sec)
+
+mysql> insert into target_types (name) values ('media');
+Query OK, 1 row affected (0,01 sec)
+
+mysql> insert into target_types (name) values ('users');
+Query OK, 1 row affected (0,01 sec)
+
+mysql> selcet * from target_types;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'selcet * from target_types' at line 1
+mysql> select * from target_types;
++----+-------+---------------------+
+| id | name  | create_at           |
++----+-------+---------------------+
+|  1 | posts | 2019-10-04 20:44:31 |
+|  2 | media | 2019-10-04 20:45:03 |
+|  3 | users | 2019-10-04 20:47:12 |
++----+-------+---------------------+
+3 rows in set (0,00 sec)
+
+mysql> insert into target_types (name) values ('video');
+Query OK, 1 row affected (0,01 sec)
+
+mysql> insert into target_types (name) values ('video2'),(foto);
+ERROR 1054 (42S22): Unknown column 'foto' in 'field list'
+mysql> insert into target_types (name) values ('video2'),('foto');
+Query OK, 2 rows affected (0,01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from target_types;
++----+--------+---------------------+
+| id | name   | create_at           |
++----+--------+---------------------+
+|  1 | posts  | 2019-10-04 20:44:31 |
+|  2 | media  | 2019-10-04 20:45:03 |
+|  3 | users  | 2019-10-04 20:47:12 |
+|  4 | video  | 2019-10-04 20:54:28 |
+|  5 | video2 | 2019-10-04 20:55:34 |
+|  6 | foto   | 2019-10-04 20:55:34 |
++----+--------+---------------------+
+6 rows in set (0,00 sec)
+
+mysql> UPDATE target_types SET name = 'video3' WHERE id=5
+    -> ;
+Query OK, 1 row affected (0,01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from target_types;
++----+--------+---------------------+
+| id | name   | create_at           |
++----+--------+---------------------+
+|  1 | posts  | 2019-10-04 20:44:31 |
+|  2 | media  | 2019-10-04 20:45:03 |
+|  3 | users  | 2019-10-04 20:47:12 |
+|  4 | video  | 2019-10-04 20:54:28 |
+|  5 | video3 | 2019-10-04 20:55:34 |
+|  6 | foto   | 2019-10-04 20:55:34 |
++----+--------+---------------------+
+6 rows in set (0,00 sec)
+
+mysql> DELETE FROM target_types WHERE id=5
+    -> ;
+Query OK, 1 row affected (0,01 sec)
+
+mysql> insert into target_types (id,name) values (5,'music');
+Query OK, 1 row affected (0,01 sec)
+
+mysql> UPDATE target_types SET name = 'user' WHERE id=3
+    -> ;
+Query OK, 1 row affected (0,02 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from target_types;
++----+-------+---------------------+
+| id | name  | create_at           |
++----+-------+---------------------+
+|  1 | posts | 2019-10-04 20:44:31 |
+|  2 | media | 2019-10-04 20:45:03 |
+|  3 | user  | 2019-10-04 20:47:12 |
+|  4 | video | 2019-10-04 20:54:28 |
+|  5 | music | 2019-10-04 21:06:54 |
+|  6 | foto  | 2019-10-04 20:55:34 |
++----+-------+---------------------+
+6 rows in set (0,00 sec)
+
+mysql>
