@@ -1,6 +1,6 @@
 use vK;
 
-# Ключики для таблицы профайлов 
+# РљР»СЋС‡РёРєРё РґР»СЏ С‚Р°Р±Р»РёС†С‹ РїСЂРѕС„Р°Р№Р»РѕРІ 
 ALTER TABLE profiles 
 	ADD CONSTRAINT fk_profiles_user_id
 		FOREIGN KEY (user_id) REFERENCES users(id)
