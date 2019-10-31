@@ -1,6 +1,6 @@
 use kinopoisk;
 
-#Таблица пользователей. Не делим с профайлами, так как на одного пользователя у нас только один профайл
+#РўР°Р±Р»РёС†Р° РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№. РќРµ РґРµР»РёРј СЃ РїСЂРѕС„Р°Р№Р»Р°РјРё, С‚Р°Рє РєР°Рє РЅР° РѕРґРЅРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ Сѓ РЅР°СЃ С‚РѕР»СЊРєРѕ РѕРґРёРЅ РїСЂРѕС„Р°Р№Р»
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
@@ -27,7 +27,7 @@ CREATE TABLE films (
 	fees_russia INT(15) NOT NULL DEFAULT 0,
 	length_minuts INT(10) NOT NULL,
 	rating_old INT(2) DEFAULT 0
-) comment="Фильмы в базе";
+) comment="Р¤РёР»СЊРјС‹ РІ Р±Р°Р·Рµ";
 
 
 DROP TABLE IF EXISTS people;
@@ -37,7 +37,7 @@ CREATE TABLE people (
 	last_name VARCHAR(100) NOT NULL,
 	birthday DATE NOT NULL,
 	height INT(3) UNSIGNED NOT NULL
-) comment="Люди учавствующие в фильмах";
+) comment="Р›СЋРґРё СѓС‡Р°РІСЃС‚РІСѓСЋС‰РёРµ РІ С„РёР»СЊРјР°С…";
 
 
 DROP TABLE IF EXISTS films_people;
@@ -46,40 +46,40 @@ CREATE TABLE films_people (
 	film_id INT(15) UNSIGNED NOT NULL,
 	people_id INT(15) UNSIGNED NOT NULL,
 	role_id INT(15) UNSIGNED NOT NULL
-) comment="Связь фильмов и людей в них";
+) comment="РЎРІСЏР·СЊ С„РёР»СЊРјРѕРІ Рё Р»СЋРґРµР№ РІ РЅРёС…";
 
 DROP TABLE IF EXISTS who_plays;
 CREATE TABLE who_plays (
 	id INT(15) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	title VARCHAR(255) NOT NULL
-) comment="Кого люди играют в фильмах";
+) comment="РљРѕРіРѕ Р»СЋРґРё РёРіСЂР°СЋС‚ РІ С„РёР»СЊРјР°С…";
 
 DROP TABLE IF EXISTS people_who_plays;
 CREATE TABLE people_who_plays (
 	films_people_id INT(15) UNSIGNED NOT NULL,
 	who_plays_id INT(15) UNSIGNED NOT NULL,
 	type_role ENUM('main','episode','other') NOT NULL DEFAULT 'other'
-) comment="Дополнительная связь, кого играет актер в фильме";
+) comment="Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ СЃРІСЏР·СЊ, РєРѕРіРѕ РёРіСЂР°РµС‚ Р°РєС‚РµСЂ РІ С„РёР»СЊРјРµ";
 
 DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
 	id INT(15) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL
-) comment="Роли людей в фильмах";
+) comment="Р РѕР»Рё Р»СЋРґРµР№ РІ С„РёР»СЊРјР°С…";
 
 
 DROP TABLE IF EXISTS genre;
 CREATE TABLE genre (
 	id INT(15) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL
-) comment="Жанры кино";
+) comment="Р–Р°РЅСЂС‹ РєРёРЅРѕ";
 
 								
 DROP TABLE IF EXISTS films_genre;
 CREATE TABLE films_genre (
 	film_id INT(15) UNSIGNED NOT NULL,
 	genre_id INT(15) UNSIGNED NOT NULL
-) comment="Связь фильмов и жанров";
+) comment="РЎРІСЏР·СЊ С„РёР»СЊРјРѕРІ Рё Р¶Р°РЅСЂРѕРІ";
 
 
 DROP TABLE IF EXISTS media;
@@ -90,7 +90,7 @@ CREATE TABLE media (
 	name VARCHAR(255) NOT NULL,
 	file_name VARCHAR(255),
 	title TEXT DEFAULT NULL
-) comment="Постеры, трейлеры и кадры к фильму";
+) comment="РџРѕСЃС‚РµСЂС‹, С‚СЂРµР№Р»РµСЂС‹ Рё РєР°РґСЂС‹ Рє С„РёР»СЊРјСѓ";
 
 DROP TABLE IF EXISTS ratings;
 CREATE TABLE ratings (
@@ -100,7 +100,7 @@ CREATE TABLE ratings (
 	rating INT(2) UNSIGNED NOT NULL,
 	created_at DATETIME NOT NULL DEFAULT NOW(),
 	updated_at DATETIME NOT NULL DEFAULT NOW()
-) comment="Рейтинги пользвотелей к филмам";
+) comment="Р РµР№С‚РёРЅРіРё РїРѕР»СЊР·РІРѕС‚РµР»РµР№ Рє С„РёР»РјР°Рј";
 
 
 DROP TABLE IF EXISTS reviews;
@@ -114,27 +114,27 @@ CREATE TABLE reviews (
 	rhesus ENUM('-','0','+') NOT NULL DEFAULT '0',
 	created_at DATETIME NOT NULL DEFAULT NOW(),
 	updated_at DATETIME NOT NULL DEFAULT NOW()
-) comment="Рейтинги пользвотелей к филмам";
+) comment="Р РµР№С‚РёРЅРіРё РїРѕР»СЊР·РІРѕС‚РµР»РµР№ Рє С„РёР»РјР°Рј";
 
 
 # =========================================================================================
-# Вставивим данные которые нам сразу нужны 
+# Р’СЃС‚Р°РІРёРІРёРј РґР°РЅРЅС‹Рµ РєРѕС‚РѕСЂС‹Рµ РЅР°Рј СЃСЂР°Р·Сѓ РЅСѓР¶РЅС‹ 
 # ======================================================================================
-INSERT INTO genre (name) VALUES ('Аниме'),('Биография'),('Боевик'),('Вестерн'),('Военный'),('Детектив'),('Детский'),
-								('Документальный'),('Драма'),('Исторический'),('Комедия'),('Концерт'),('Короткометражка'),
-								('Криминальный'),('Мелодрама'),('Музыкальный'),('Мультфильм'),('Мюзикл'),('Приключения'),
-								('Реальное ТВ'),('Семейный'),('Спортивные'),('Ток-шоу'),('Триллер'),('Ужасы'),('Фантастика'),
-								('Фильмы-нуар'),('Фэнтези'),('Сериал');
+INSERT INTO genre (name) VALUES ('РђРЅРёРјРµ'),('Р‘РёРѕРіСЂР°С„РёСЏ'),('Р‘РѕРµРІРёРє'),('Р’РµСЃС‚РµСЂРЅ'),('Р’РѕРµРЅРЅС‹Р№'),('Р”РµС‚РµРєС‚РёРІ'),('Р”РµС‚СЃРєРёР№'),
+								('Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Р№'),('Р”СЂР°РјР°'),('РСЃС‚РѕСЂРёС‡РµСЃРєРёР№'),('РљРѕРјРµРґРёСЏ'),('РљРѕРЅС†РµСЂС‚'),('РљРѕСЂРѕС‚РєРѕРјРµС‚СЂР°Р¶РєР°'),
+								('РљСЂРёРјРёРЅР°Р»СЊРЅС‹Р№'),('РњРµР»РѕРґСЂР°РјР°'),('РњСѓР·С‹РєР°Р»СЊРЅС‹Р№'),('РњСѓР»СЊС‚С„РёР»СЊРј'),('РњСЋР·РёРєР»'),('РџСЂРёРєР»СЋС‡РµРЅРёСЏ'),
+								('Р РµР°Р»СЊРЅРѕРµ РўР’'),('РЎРµРјРµР№РЅС‹Р№'),('РЎРїРѕСЂС‚РёРІРЅС‹Рµ'),('РўРѕРє-С€РѕСѓ'),('РўСЂРёР»Р»РµСЂ'),('РЈР¶Р°СЃС‹'),('Р¤Р°РЅС‚Р°СЃС‚РёРєР°'),
+								('Р¤РёР»СЊРјС‹-РЅСѓР°СЂ'),('Р¤СЌРЅС‚РµР·Рё'),('РЎРµСЂРёР°Р»');
 
 
-INSERT INTO roles (name) VALUES ('Актер'), ('Режиссер'), ('Сценарист'), ('Композитор'), ('Монтажер'), ('Продюсер'),('Оператор'),('Художник'),('Актер дубляжа');
+INSERT INTO roles (name) VALUES ('РђРєС‚РµСЂ'), ('Р РµР¶РёСЃСЃРµСЂ'), ('РЎС†РµРЅР°СЂРёСЃС‚'), ('РљРѕРјРїРѕР·РёС‚РѕСЂ'), ('РњРѕРЅС‚Р°Р¶РµСЂ'), ('РџСЂРѕРґСЋСЃРµСЂ'),('РћРїРµСЂР°С‚РѕСЂ'),('РҐСѓРґРѕР¶РЅРёРє'),('РђРєС‚РµСЂ РґСѓР±Р»СЏР¶Р°');
 
 
 
 
 
 # =========================================================================================
-# Теперь создадим  внешние ключи
+# РўРµРїРµСЂСЊ СЃРѕР·РґР°РґРёРј  РІРЅРµС€РЅРёРµ РєР»СЋС‡Рё
 # ======================================================================================
 ALTER TABLE films_genre
 	ADD CONSTRAINT fk_films_genre_film_id
