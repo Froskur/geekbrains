@@ -25,7 +25,7 @@ CREATE TABLE films (
 	budget INT(15) NOT NULL DEFAULT 0,
 	fees_world INT(15) NOT NULL DEFAULT 0,
 	fees_russia INT(15) NOT NULL DEFAULT 0,
-	length_minuts INT(10) NOT NULL,
+	length_minutes INT(10) NOT NULL,
 	rating_old INT(2) DEFAULT 0
 ) comment="Фильмы в базе";
 
@@ -75,7 +75,7 @@ CREATE TABLE genre (
 ) comment="Жанры кино";
 
 								
-DROP TABLE IF EXISTS films_genre;
+DROP TABLE IF EXISTS films_genres;
 CREATE TABLE films_genre (
 	film_id INT(15) UNSIGNED NOT NULL,
 	genre_id INT(15) UNSIGNED NOT NULL
