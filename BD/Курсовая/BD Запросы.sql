@@ -1,6 +1,6 @@
 use kinopoisk;
 
-# Òàê, äëÿ çàòðàâêè ñìîòðèì ôèëìû ñ æàíðàìà è ñîðòèðâêîé îï áþäæåòó 
+# Ð¢Ð°Ðº, Ð´Ð»Ñ Ð·Ð°Ñ‚Ñ€Ð°Ð²ÐºÐ¸ ÑÐ¼Ð¾Ñ‚Ñ€Ð¸Ð¼ Ñ„Ð¸Ð»Ð¼Ñ‹ Ñ Ð¶Ð°Ð½Ñ€Ð°Ð¼Ð° Ð¸ ÑÐ¾Ñ€Ñ‚Ð¸Ñ€Ð²ÐºÐ¾Ð¹ Ð¾Ð¿ Ð±ÑŽÐ´Ð¶ÐµÑ‚Ñƒ 
 SELECT films.id, GROUP_CONCAT(genre.name) as ganres,films.budget FROM films_genres 
 	JOIN films ON (films.id = films_genres.film_id)
 	JOIN genre ON (genre.id = films_genres.genre_id)
@@ -8,7 +8,7 @@ GROUP by films.id
 ORDER BY films.budget desc
 ;
 
-# Ïîëó÷àåì ñàìûå ðåéòèíãîâûå ôèëüìû cî ñðåäíèì ðåéòèíãîì âûøåäøèå â ýòîì ãîäó  
+# ÐŸÐ¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ ÑÐ°Ð¼Ñ‹Ðµ Ñ€ÐµÐ¹Ñ‚Ð¸Ð½Ð³Ð¾Ð²Ñ‹Ðµ Ñ„Ð¸Ð»ÑŒÐ¼Ñ‹ cÐ¾ ÑÑ€ÐµÐ´Ð½Ð¸Ð¼ Ñ€ÐµÐ¹Ñ‚Ð¸Ð½Ð³Ð¾Ð¼ Ð²Ñ‹ÑˆÐµÐ´ÑˆÐ¸Ðµ Ð² ÑÑ‚Ð¾Ð¼ Ð³Ð¾Ð´Ñƒ  
 SELECT ratings.film_id, films.original_name, (SUM(rating)/COUNT(user_id)) as final_reting FROM ratings
 	JOIN films ON (films.id = ratings.film_id)
 WHERE films.release_of LIKE '2019%'	
@@ -16,26 +16,26 @@ GROUP BY film_id
 ORDER BY (SUM(rating)/COUNT(user_id)) DESC
 ;
 
-# òîæå ðåéòèíã, íî îãðàíè÷èâàåìñÿ æàíðîì    
+# Ñ‚Ð¾Ð¶Ðµ Ñ€ÐµÐ¹Ñ‚Ð¸Ð½Ð³, Ð½Ð¾ Ð¾Ð³Ñ€Ð°Ð½Ð¸Ñ‡Ð¸Ð²Ð°ÐµÐ¼ÑÑ Ð¶Ð°Ð½Ñ€Ð¾Ð¼    
 SELECT ratings.film_id, films.original_name, (SUM(rating)/COUNT(user_id)) as final_reting 
 FROM ratings
 	JOIN films ON (films.id = ratings.film_id)
 	JOIN films_genres ON (films_genres.film_id = films.id)
-	JOIN genre ON (genre.id = films_genres.genre_id && genre.name="Òðèëëåð")
+	JOIN genre ON (genre.id = films_genres.genre_id && genre.name="Ð¢Ñ€Ð¸Ð»Ð»ÐµÑ€")
 WHERE films.release_of LIKE '2019%'	
 GROUP BY film_id
 ORDER BY (SUM(rating)/COUNT(user_id)) DESC
 ;
 
-# Äåëàåì çàïðîñ ïî ëþäÿì (÷èñëî ôèëüìîâ ó âñåõ äâà, òàê êàê ó ìåíÿ òàê çàïîëíèëàñü òàáëèöà)
-# ñîáèðàåì òîëüêî àêòîðåðîâ êîòîðûå èãðàëè ãëàâíûå ðîëè è âûâîäèì êîãî îíè èãðàëè â ôèëüìàõ çà 90-ýõ ãîäîâ 
-# è ñ÷èòàåì ñêîëüêî ðîëåé ó íèõ áûëî â ôèëüìå
+# Ð”ÐµÐ»Ð°ÐµÐ¼ Ð·Ð°Ð¿Ñ€Ð¾Ñ Ð¿Ð¾ Ð»ÑŽÐ´ÑÐ¼ (Ñ‡Ð¸ÑÐ»Ð¾ Ñ„Ð¸Ð»ÑŒÐ¼Ð¾Ð² Ñƒ Ð²ÑÐµÑ… Ð´Ð²Ð°, Ñ‚Ð°Ðº ÐºÐ°Ðº Ñƒ Ð¼ÐµÐ½Ñ Ñ‚Ð°Ðº Ð·Ð°Ð¿Ð¾Ð»Ð½Ð¸Ð»Ð°ÑÑŒ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ð°)
+# ÑÐ¾Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð°ÐºÑ‚Ð¾Ñ€ÐµÑ€Ð¾Ð² ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð¸Ð³Ñ€Ð°Ð»Ð¸ Ð³Ð»Ð°Ð²Ð½Ñ‹Ðµ Ñ€Ð¾Ð»Ð¸ Ð¸ Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ð¼ ÐºÐ¾Ð³Ð¾ Ð¾Ð½Ð¸ Ð¸Ð³Ñ€Ð°Ð»Ð¸ Ð² Ñ„Ð¸Ð»ÑŒÐ¼Ð°Ñ… Ð·Ð° 90-ÑÑ… Ð³Ð¾Ð´Ð¾Ð² 
+# Ð¸ ÑÑ‡Ð¸Ñ‚Ð°ÐµÐ¼ ÑÐºÐ¾Ð»ÑŒÐºÐ¾ Ñ€Ð¾Ð»ÐµÐ¹ Ñƒ Ð½Ð¸Ñ… Ð±Ñ‹Ð»Ð¾ Ð² Ñ„Ð¸Ð»ÑŒÐ¼Ðµ
   
 SELECT CONCAT(people.first_name," ",people.last_name) as acter, people.birthday, count(DISTINCT films_people.film_id) as count_films, 
        GROUP_CONCAT(DISTINCT roles.name), count(who_plays.title) 
 FROM films_people 
 	JOIN people ON (people.id = films_people.people_id)
-	JOIN roles ON (roles.id = films_people.role_id AND roles.name="Àêòåð")
+	JOIN roles ON (roles.id = films_people.role_id AND roles.name="ÐÐºÑ‚ÐµÑ€")
 	JOIN people_who_plays ON (people_who_plays.films_people_id = films_people.id AND people_who_plays.type_role='main')
 	JOIN who_plays ON (people_who_plays.who_plays_id = who_plays.id)
 	JOIN films ON (films.id = films_people.film_id AND films.release_of>='1990-01-01' and films.release_of<='1999-12-31')
