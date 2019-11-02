@@ -1,6 +1,6 @@
 use kinopoisk;
 
-# Новинки за последний год 
+# РќРѕРІРёРЅРєРё Р·Р° РїРѕСЃР»РµРґРЅРёР№ РіРѕРґ 
 DROP VIEW IF EXISTS view_top_new_films;
 
 CREATE VIEW view_top_new_films AS 
@@ -13,7 +13,7 @@ CREATE VIEW view_top_new_films AS
    );
 
   
-# Top мультфильмов для детей до 12 лет с указанием режиссера
+# Top РјСѓР»СЊС‚С„РёР»СЊРјРѕРІ РґР»СЏ РґРµС‚РµР№ РґРѕ 12 Р»РµС‚ СЃ СѓРєР°Р·Р°РЅРёРµРј СЂРµР¶РёСЃСЃРµСЂР°
 DROP VIEW IF EXISTS view_animation_for_children;
 
 CREATE VIEW view_animation_for_children AS 
@@ -21,7 +21,7 @@ CREATE VIEW view_animation_for_children AS
 	   (SUM(ratings.rating)/COUNT(ratings.user_id)) as total_reting,SUM(ratings.rating), COUNT(ratings.user_id) 
 		FROM films_genres 
 				JOIN films ON (films.id = films_genres.film_id)
-				JOIN genre ON (genre.id = films_genres.genre_id && genre.name="Мультфильм")
+				JOIN genre ON (genre.id = films_genres.genre_id && genre.name="РњСѓР»СЊС‚С„РёР»СЊРј")
 				JOIN ratings ON (ratings.film_id = films.id)
 		WHERE films.rating_old <= 12	
 		GROUP by films.id
@@ -29,14 +29,14 @@ CREATE VIEW view_animation_for_children AS
    );
 
 
-# Тригеры не стал делать уже совсем скучно, так как высасываешь из пальца...
-# врпочем, один сделал, для рейтинга в самом фильме чтобы не тащить из базы 
+# РўСЂРёРіРµСЂС‹ РЅРµ СЃС‚Р°Р» РґРµР»Р°С‚СЊ СѓР¶Рµ СЃРѕРІСЃРµРј СЃРєСѓС‡РЅРѕ, С‚Р°Рє РєР°Рє РІС‹СЃР°СЃС‹РІР°РµС€СЊ РёР· РїР°Р»СЊС†Р°...
+# РІСЂРїРѕС‡РµРј, РѕРґРёРЅ СЃРґРµР»Р°Р», РґР»СЏ СЂРµР№С‚РёРЅРіР° РІ СЃР°РјРѕРј С„РёР»СЊРјРµ С‡С‚РѕР±С‹ РЅРµ С‚Р°С‰РёС‚СЊ РёР· Р±Р°Р·С‹ 
   
-#1 Добавялем поле в фильмы
-ALTER TABLE kinopoisk.films ADD rating_users FLOAT DEFAULT 0 NOT NULL COMMENT 'Рейтинг фильма, обновляется через тригер';
+#1 Р”РѕР±Р°РІСЏР»РµРј РїРѕР»Рµ РІ С„РёР»СЊРјС‹
+ALTER TABLE kinopoisk.films ADD rating_users FLOAT DEFAULT 0 NOT NULL COMMENT 'Р РµР№С‚РёРЅРі С„РёР»СЊРјР°, РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ С‡РµСЂРµР· С‚СЂРёРіРµСЂ';
 
-#2. Добовляем тригер на таблицу с рейтингами 
-# У меня были сложности с добавлением тригера, потом я добавлял через DBever, почему ту разедлитель не менялся, но в конечном итоге я его вставил
+#2. Р”РѕР±РѕРІР»СЏРµРј С‚СЂРёРіРµСЂ РЅР° С‚Р°Р±Р»РёС†Сѓ СЃ СЂРµР№С‚РёРЅРіР°РјРё 
+# РЈ РјРµРЅСЏ Р±С‹Р»Рё СЃР»РѕР¶РЅРѕСЃС‚Рё СЃ РґРѕР±Р°РІР»РµРЅРёРµРј С‚СЂРёРіРµСЂР°, РїРѕС‚РѕРј СЏ РґРѕР±Р°РІР»СЏР» С‡РµСЂРµР· DBever, РїРѕС‡РµРјСѓ С‚Сѓ СЂР°Р·РµРґР»РёС‚РµР»СЊ РЅРµ РјРµРЅСЏР»СЃСЏ, РЅРѕ РІ РєРѕРЅРµС‡РЅРѕРј РёС‚РѕРіРµ СЏ РµРіРѕ РІСЃС‚Р°РІРёР»
 DROP TRIGGER IF EXISTS kinopoisk.trg_ratings_insert;
 DROP TRIGGER IF EXISTS kinopoisk.trg_ratings_update;
 DROP TRIGGER IF EXISTS kinopoisk.trg_ratings_delete;
@@ -68,7 +68,7 @@ END//
 
 DELIMITER ;
 
-# 3. Провреряем было значение 0 - если данные только залиты , в конце стало 7.3333, как и было
+# 3. РџСЂРѕРІСЂРµСЂСЏРµРј Р±С‹Р»Рѕ Р·РЅР°С‡РµРЅРёРµ 0 - РµСЃР»Рё РґР°РЅРЅС‹Рµ С‚РѕР»СЊРєРѕ Р·Р°Р»РёС‚С‹ , РІ РєРѕРЅС†Рµ СЃС‚Р°Р»Рѕ 7.3333, РєР°Рє Рё Р±С‹Р»Рѕ
 INSERT INTO ratings (id,film_id,user_id,ratings) VALUES (501,267,12,5);
 SELECT rating_users FROM films WHERE id=267;
 
