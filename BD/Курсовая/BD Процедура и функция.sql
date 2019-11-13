@@ -1,73 +1,79 @@
-use kinopoisk;
+# =======================================================
+# 1.
+# РЎРѕР·РґР°Р№С‚Рµ С‚Р°Р±Р»РёС†Сѓ logs С‚РёРїР° Archive. 
+# РџСѓСЃС‚СЊ РїСЂРё РєР°Р¶РґРѕРј СЃРѕР·РґР°РЅРёРё Р·Р°РїРёСЃРё РІ С‚Р°Р±Р»РёС†Р°С… users, catalogs Рё products РІ С‚Р°Р±Р»РёС†Сѓ logs РїРѕРјРµС‰Р°РµС‚СЃСЏ 
+# РІСЂРµРјСЏ Рё РґР°С‚Р° СЃРѕР·РґР°РЅРёСЏ Р·Р°РїРёСЃРё, РЅР°Р·РІР°РЅРёРµ С‚Р°Р±Р»РёС†С‹, РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїРµСЂРІРёС‡РЅРѕРіРѕ РєР»СЋС‡Р° Рё СЃРѕРґРµСЂР¶РёРјРѕРµ РїРѕР»СЏ name.
 
-#Создание функции, так как результат функции можно использовать в новых запросах, то сделаем что-то именно такое,
-#что можно вставить в запрос
+DROP TABLE IF EXISTS logs;
 
-#Получает ID фильмов заданного жанра, отсортированных по уровню положительных отзывов и дате выхода сначала более старые
-DROP FUNCTION IF EXISTS top_films_viewpoint_user;
+CREATE TABLE logs (
+	created_at DATETIME NOT NULL,
+	target_id BIGINT NOT NULL,
+	table_name ENUM('users', 'catalogs' ,'products') NOT NULL,
+	name VARCHAR(255)
+) ENGINE=Archive;
+
+# СЃРѕР·РґР°РµРј С‚СЂРёРіРµСЂ РЅР° РєР°Р¶РґСѓСЋ С‚Р°Р±Р»РёС†Сѓ 
+DROP TRIGGER IF EXISTS trg_users_logs_create;
+DROP TRIGGER IF EXISTS trg_catalogs_logs_create;
+DROP TRIGGER IF EXISTS trg_products_logs_create;
 
 DELIMITER //
 
-CREATE FUNCTION top_films_viewpoint_user (count_top INT, genre_name VARCHAR(255))
-RETURNS VARCHAR(255) DETERMINISTIC
-BEGIN	
-	RETURN (
-		SELECT GROUP_CONCAT(id) FROM (
-			SELECT films.id,films.premiere_world,SUM(IF(reviews.rhesus="+",1,IF(reviews.rhesus="-",-1,0))) as user_raitings 
-				FROM films
-				JOIN reviews ON (films.id=reviews.film_id)
-				JOIN films_genres ON (films.id=films_genres.film_id)
-				JOIN genre ON (films_genres.genre_id=genre.id && genre.name LIKE genre_name)
-			GROUP BY id
-			ORDER BY user_raitings DESC, premiere_world
-			LIMIT count_top
-		) as tmp)
-	;
+CREATE TRIGGER trg_users_logs_create AFTER INSERT ON users
+FOR EACH ROW BEGIN
+   INSERT INTO logs SET created_at = NOW(), 
+   						target_id = NEW.id,
+   						table_name = 'users',
+   						name = NEW.name
+  	;
+END//
+
+CREATE TRIGGER trg_catalogs_logs_create AFTER INSERT ON catalogs
+FOR EACH ROW BEGIN
+   INSERT INTO logs SET created_at = NOW(), 
+   						target_id = NEW.id,
+   						table_name = 'catalogs',
+   						name = NEW.name
+  	;
+END//
+
+CREATE TRIGGER trg_products_logs_create AFTER INSERT ON products
+FOR EACH ROW BEGIN
+   INSERT INTO logs SET created_at = NOW(), 
+   						target_id = NEW.id,
+   						table_name = 'products',
+   						name = NEW.name
+  	;
 END//
 
 DELIMITER ;
 
-#Проверяем 
-SELECT top_films_viewpoint_user(5,'Боевик');
+# =====================================================================================
+# 2.
+# (РїРѕ Р¶РµР»Р°РЅРёСЋ) РЎРѕР·РґР°Р№С‚Рµ SQL-Р·Р°РїСЂРѕСЃ, РєРѕС‚РѕСЂС‹Р№ РїРѕРјРµС‰Р°РµС‚ РІ С‚Р°Р±Р»РёС†Сѓ users РјРёР»Р»РёРѕРЅ Р·Р°РїРёСЃРµР№.
 
-SELECT top_films_viewpoint_user(5,'%Мульт%');
+# РЎРѕР·РґР°РµРј РїСЂРѕС†РµРґСѓСЂСѓ...
 
-#я, кстати, подумал, что так сработает, но нет. Только по первому ID выдает. 
-#А можно кстати чтобы сработало?
-SELECT * FROM films WHERE id IN (top_films_viewpoint_user(5,'Боевик'));
-
-
-# Вот из-за вечных проблем то так не могу то этак я лично никогда не сталкивался с процедурами и функциями
-# вечно с ними какие-то проблемы, только разве что для оптимизации и реиндексация в MSSQL
-
-# Потому процедура совсем простенькая, посчитаем количество мало бюджетных и высокобюджетных фильмов
-# Я сделал через переменную, а не просто через вывод результата запроса 
-DROP PROCEDURE IF EXISTS films_budgets_counts;
+DROP PROCEDURE IF EXISTS users_create_big_data;
 
 DELIMITER //
 
-CREATE PROCEDURE films_budgets_counts (INOUT number_films INT, IN film_budget INT, IN small_or_high CHAR(1))
-BEGIN
-CASE small_or_high
-WHEN 's' THEN
-	SELECT COUNT(id) INTO number_films FROM films WHERE budget<=film_budget;		
-WHEN 'h' THEN  
-	SELECT COUNT(id) INTO number_films FROM films WHERE budget>=film_budget;		
-ELSE 
-	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Last parametr need set 's' or 'h'";
-END CASE;
+CREATE PROCEDURE users_create_big_data (IN count_rows INT)
+  BEGIN 
+	DECLARE new_birthday VARCHAR(10);  
+	WHILE count_rows > 0 DO
+		# Р”РѕР±Р°РІРёР» С‡С‚РѕР± РїРѕР»СЊР·РѕРІР°С‚РµР»Рё С…РѕС‚СЊ РЅРµРјРЅРѕРіРѕ СЂР°Р·Р»РёС‡Р°Р»РёСЃСЊ	
+		SET new_birthday = CONCAT(FLOOR(RAND()*(2002-1960+1)+1960),'-',FLOOR(RAND()*(12-1+1)+1),'-',FLOOR(RAND()*(28-1+1)+1));	
+		
+		INSERT DELAYED INTO users SET name = 'Auto create', birthday_at = new_birthday;    	
+    	SET count_rows = count_rows - 1;
+  	END WHILE;	     
+	  
 END//
-
+  
 DELIMITER ;
 
-# Кол-во фильмов с бюджетом меньше 1М
-CALL films_budgets_counts(@my_count,1000000,'s');
-SELECT @my_count;
-
-# Кол-во фильмов с бюджетом больше 60М
-CALL films_budgets_counts(@my_count,60000000,'h');
-SELECT @my_count;
-
-#Ошибка 
-CALL films_budgets_counts(@my_count,60000000,'r');
+# Р’С‹Р·С‹РІР°РµРј РїСЂРѕС†РµРґСѓСЂСѓ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РјРёР»Р»РёРѕРЅР° Р·Р°РїРёСЃРµР№
+CALL users_create_big_data(1000000);
 
